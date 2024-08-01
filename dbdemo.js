@@ -1,14 +1,15 @@
 const { MongoClient } = require('mongodb');
+require('dotenv').config();
 
-// Connection URI
-const uri = 'mongodb://localhost:27017'; // Replace with your MongoDB URI if different
+//Database connection url
+const connectionUrl = process.env.db_url;
 
 // Database and collection names
-const dbName = 'chat-app-db'; // Replace with your database name
-const collectionName = 'messages'; // Replace with your collection name
+const dbName = process.env.db_name; 
+const collectionName = 'messages';
 
 // Create a new MongoClient
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+const client = new MongoClient(connectionUrl, { useNewUrlParser: true, useUnifiedTopology: true });
 
 async function performOperations(document) {
     try {
@@ -24,9 +25,9 @@ async function performOperations(document) {
         const insertResult = await collection.insertOne(document);
         console.log('Inserted document:', insertResult.insertedId);
 
-        // // Find all documents
-        // const documents = await collection.find({}).toArray();
-        // console.log('Documents:', documents);
+        // Find all documents
+        const documents = await collection.find({}).toArray();
+        console.log('Documents:', documents);
 
         // // Update a document
         // const updateResult = await collection.updateOne(
