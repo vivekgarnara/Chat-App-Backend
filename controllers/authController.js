@@ -109,3 +109,17 @@ exports.getNotifications = async (req, res, next) => {
         next(error);
     }
 };
+
+//Get ChatUsers
+exports.getChatUsers = async (req, res, next) => {
+    try {
+        try {
+            const chatUsers = await User.find();
+            res.status(200).json(chatUsers);
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    } catch (error) {
+        next(error);
+    }
+};
