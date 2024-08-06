@@ -7,6 +7,7 @@ const performOperations = require("./dbdemo");
 const bodyParser = require("body-parser");
 const authRouter = require('./routes/authRoute');
 const connectDB = require('./config/db');
+const saveChatMessage = require('./config/saveChatMessage');
 
 app.use(cors());
 app.use(express.json());
@@ -27,10 +28,23 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
+
+    socket.on("setup", (data) => {
+        socket.join(data);
+        socket.emit("connected");
+    })
+
+    socket.on("joinRoom",(data) => {
+        socket.join(data);
+    })
+
     socket.on("sendMessage", (data) => {
-        const documentToInsert = { type: "insert", message: data };
-        performOperations(documentToInsert).catch(console.error);
-        socket.broadcast.emit("receivedMessage", data);
+        // const documentToInsert = { type: "insert", message: data };
+        // performOperations(documentToInsert).catch(console.error);
+        // socket.join(data.receiverId);
+        // console.log(data.receiverId);
+        saveChatMessage(data);
+        socket.to(data.senderId).emit("receivedMessage", data);
     })
 
     socket.on("userUpdateNotify",(data) => {

@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 const bcrypt = require('bcryptjs');
 const User = require('../models/userModel');
 const Notification = require('../models/notificationModel');
-const createError = require('../utils/appError');
+const Message = require('../models/messageModel');
 
 dotenv.config();
 const jwtSecretKey = process.env.jwt_secret_key;
@@ -116,6 +116,21 @@ exports.getChatUsers = async (req, res, next) => {
         try {
             const chatUsers = await User.find();
             res.status(200).json(chatUsers);
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    } catch (error) {
+        next(error);
+    }
+};
+
+//Get Messages
+exports.getMessages = async (req, res, next) => {
+    try {
+        const { senderId, receiverId } = req.query;
+        try {
+            const messages = await Message.find({ sender: senderId, receiver: receiverId });
+            res.status(200).json(messages);
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
