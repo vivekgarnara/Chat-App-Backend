@@ -129,7 +129,13 @@ exports.getMessages = async (req, res, next) => {
     try {
         const { senderId, receiverId } = req.query;
         try {
-            const messages = await Message.find({ sender: senderId, receiver: receiverId });
+            const messages = await Message.find({
+                $or: [
+                    { sender: senderId, receiver: receiverId },
+                    { sender: receiverId, receiver: senderId }
+                ]
+            });
+            console.log(messages);
             res.status(200).json(messages);
         } catch (error) {
             res.status(500).json({ message: error.message });
